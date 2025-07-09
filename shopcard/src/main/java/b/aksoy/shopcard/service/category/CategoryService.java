@@ -3,7 +3,6 @@ package b.aksoy.shopcard.service.category;
 import b.aksoy.shopcard.entity.Category;
 import b.aksoy.shopcard.exception.AlreadyExistsCategoryException;
 import b.aksoy.shopcard.exception.CategoryNotFoundException;
-import b.aksoy.shopcard.exception.ProductNotFoundException;
 import b.aksoy.shopcard.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public Category getCategoryByName(String name) {
-        return categoryRepository.findByName(name).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+        return categoryRepository.findByName(name);
     }
 
     @Override
@@ -47,8 +46,9 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public void deleteCategory(Long id) {
+    public Category deleteCategory(Long id) {
         categoryRepository.findById(id).ifPresentOrElse(categoryRepository :: delete ,
                 () -> {throw new CategoryNotFoundException("Category not found");});
+        return null;
     }
 }

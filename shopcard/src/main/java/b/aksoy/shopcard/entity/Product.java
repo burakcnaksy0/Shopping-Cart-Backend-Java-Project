@@ -1,5 +1,6 @@
 package b.aksoy.shopcard.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Product {
     When an action is performed on the product (such as registration, update, deletion), apply the same action to the category.
     category_id == foreign key --> There will be a category_id column in the product table. This column will show which category this product belongs to
     */
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private Category category;  // Each product has a category. But each category have one or more than one product.
