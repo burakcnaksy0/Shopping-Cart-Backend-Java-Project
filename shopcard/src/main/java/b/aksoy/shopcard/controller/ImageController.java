@@ -36,12 +36,17 @@ public class ImageController {
     }
 
     @GetMapping("/image/download/{imageId}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) throws SQLException {
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) {
         Image image = imageService.getImageById(imageId);
-        ByteArrayResource arrayResource = new ByteArrayResource(image.getImage().getBytes(1,(int) image.getImage().length()));
 
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + image.getFileName() + "\"").body(arrayResource);
+        // byte[] olduğu için doğrudan erişim
+        Resource resource = new ByteArrayResource(image.getImage());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + image.getFileName() + "\"")
+                .body(resource);
     }
 
 

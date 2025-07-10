@@ -97,7 +97,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategory(String category) {
-        return productRepository.findByCategoryName(category);
+        return productRepository.findByCategory_Name(category);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByCategoryNameAndBrand(String category, String brand) {
-        return productRepository.findByCategoryNameAndBrand(category, brand);
+        return productRepository.findByCategory_NameAndBrand(category, brand);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        return productRepository.findByBrandAndName(brand, name);
+        return productRepository.findByBrandAndNameContainingIgnoreCase(brand, name);
     }
 
     @Override

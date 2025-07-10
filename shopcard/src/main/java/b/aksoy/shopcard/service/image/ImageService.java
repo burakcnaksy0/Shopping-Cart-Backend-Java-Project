@@ -24,48 +24,46 @@ public class ImageService implements IImageService {
 
     @Override
     public Image getImageById(Long id) {
-        return imageRepository.findById(id).orElseThrow(() -> new ImageNotFoundException("No image found with id: " + id));
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("No image found with id: " + id));
     }
 
     @Override
     public void deleteImageById(Long id) {
-        imageRepository.findById(id).ifPresentOrElse(imageRepository::delete,
-                () -> {
-                    throw new ImageNotFoundException("No image found with id: " + id);
-                });
+        imageRepository.deleteById(id);
     }
 
     @Override
     public List<ImageDto> saveImage(List<MultipartFile> files, Long productId) {
         Product product = productService.getProductById(productId);
-        List<ImageDto> savedImageDto = new ArrayList<>();
+
+        List<ImageDto> savedImageDtos = new ArrayList<>();
+
         for (MultipartFile file : files) {
             try {
+                byte[] bytes = file.getBytes();
+
                 Image image = new Image();
                 image.setFileName(file.getOriginalFilename());
                 image.setFileType(file.getContentType());
-                image.setImage(new SerialBlob(file.getBytes()));
+                image.setImage(bytes); // artık byte[]
                 image.setProduct(product);
 
-                String buildDownloadedUrl = "/api/v1/images/image/download/";
-                String downloadedUrl = buildDownloadedUrl + image.getId();
-                image.setDownloadUrl(downloadedUrl);
-
                 Image savedImage = imageRepository.save(image);
-                savedImage.setDownloadUrl(buildDownloadedUrl + savedImage.getId());
-                imageRepository.save(savedImage);
 
-                ImageDto imageDto = new ImageDto();
-                imageDto.setImageId(savedImage.getId());
-                imageDto.setImageName(savedImage.getFileName());
-                imageDto.setDownloadUrl(savedImage.getDownloadUrl());
+                ImageDto dto = new ImageDto();
+                dto.setImageId(savedImage.getId());
+                dto.setImageName(savedImage.getFileName());
+                // downloadUrl burada atanmasın, controller'da eklenebilir
 
-                savedImageDto.add(imageDto);
-            } catch (IOException | SQLException e) {
-                throw new RuntimeException(e);
+                savedImageDtos.add(dto);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read file: " + file.getOriginalFilename(), e);
             }
         }
-        return savedImageDto;
+
+        return savedImageDtos;
     }
 
     @Override
@@ -75,11 +73,10 @@ public class ImageService implements IImageService {
         try {
             image.setFileName(file.getOriginalFilename());
             image.setFileType(file.getContentType());
-            image.setImage(new SerialBlob(file.getBytes()));
+            image.setImage(file.getBytes()); // artık byte[]
             imageRepository.save(image);
-        } catch (IOException | SQLException e) {
-            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to update image with ID: " + imageId, e);
         }
-
     }
 }

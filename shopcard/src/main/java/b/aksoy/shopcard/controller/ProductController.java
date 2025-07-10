@@ -81,7 +81,7 @@ public class ProductController {
             return ResponseEntity.ok(new ApiResponse("Found!", products));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                    .body(new ApiResponse(e.getMessage(), null));
         }
     }
 

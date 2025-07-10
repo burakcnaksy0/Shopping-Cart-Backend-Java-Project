@@ -30,9 +30,9 @@ public class Product {
     When an action is performed on the product (such as registration, update, deletion), apply the same action to the category.
     category_id == foreign key --> There will be a category_id column in the product table. This column will show which category this product belongs to
     */
-    @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;  // Each product has a category. But each category have one or more than one product.
 
     /*
@@ -40,7 +40,7 @@ public class Product {
      cascade = CascadeType.ALL --> If a product is deleted, the images associated with that product will also be deleted.
      orphanRemoval = true --> If you stop associating a product image with that product, that image will be automatically deleted from the database.
     */
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images; // Each product have one or more than one image.
 
     public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {

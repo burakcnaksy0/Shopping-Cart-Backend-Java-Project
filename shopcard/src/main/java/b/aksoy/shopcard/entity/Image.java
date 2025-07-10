@@ -21,11 +21,11 @@ public class Image {
     private String fileName;
     private String fileType;
 
-    @Lob
-    private Blob image;
+    @Column(columnDefinition = "BYTEA")
+    private byte[] image;
     private String downloadUrl; // Downloadable link to image
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id")
     private Product product;
 
