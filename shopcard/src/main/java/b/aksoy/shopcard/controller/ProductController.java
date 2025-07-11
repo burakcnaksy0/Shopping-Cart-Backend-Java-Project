@@ -96,7 +96,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/product/{productId}/update")
+    @PutMapping(value = "/product/{productId}/update")
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductRequest productName) {
         try {
             Product product = productService.getProductById(productId);
@@ -115,8 +115,9 @@ public class ProductController {
     @DeleteMapping("/product/{productId}/delete")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         try {
+            Product product = productService.getProductById(productId);
             productService.deleteProduct(productId);
-            return ResponseEntity.ok(new ApiResponse("Delete operation success!", productId));
+            return ResponseEntity.ok(new ApiResponse("Delete operation success!", product));
         }catch (ProductNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(e.getMessage(), null));

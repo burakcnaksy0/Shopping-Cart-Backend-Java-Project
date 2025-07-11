@@ -49,7 +49,7 @@ public class CategoryController {
                     .body(new ApiResponse(e.getMessage(), HttpStatus.NOT_FOUND));
         }
     }
-
+    
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category name) {
         try {

@@ -1,6 +1,6 @@
 package b.aksoy.shopcard.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +32,7 @@ public class Product {
     */
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
-    @JsonBackReference
+    @JsonIgnoreProperties("products")
     private Category category;  // Each product has a category. But each category have one or more than one product.
 
     /*
