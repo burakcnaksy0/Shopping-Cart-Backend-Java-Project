@@ -1,5 +1,6 @@
 package b.aksoy.shopcard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class Category {
     private Long id;
     private String name;
 
-    @JsonIgnoreProperties("category")
+    @JsonIgnore
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Product> products; // more than one product can be in a category.
 

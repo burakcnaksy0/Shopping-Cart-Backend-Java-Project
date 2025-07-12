@@ -1,5 +1,6 @@
 package b.aksoy.shopcard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class Product {
     */
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
-    @JsonIgnoreProperties("products")
+    @JsonIgnore
     private Category category;  // Each product has a category. But each category have one or more than one product.
 
     /*
@@ -41,6 +42,7 @@ public class Product {
      orphanRemoval = true --> If you stop associating a product image with that product, that image will be automatically deleted from the database.
     */
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @JsonIgnore
     private List<Image> images; // Each product have one or more than one image.
 
     public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category) {

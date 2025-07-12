@@ -1,5 +1,6 @@
 package b.aksoy.shopcard.service.product;
 
+import b.aksoy.shopcard.dto.ProductDto;
 import b.aksoy.shopcard.entity.Product;
 import b.aksoy.shopcard.request.AddProductRequest;
 import b.aksoy.shopcard.request.UpdateProductRequest;
@@ -21,4 +22,7 @@ public interface IProductService {
     Long countProductsByBrandAndName(String brand, String name);
 
 
+    List<ProductDto> getConvertedProductDtoList(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }
