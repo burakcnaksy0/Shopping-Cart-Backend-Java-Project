@@ -1,39 +1,61 @@
 package b.aksoy.shopcard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CartItem {
-    // sepet ogeleri
-    // Represents each product and its quantity in the cart.
-    // A cart item is actually a product.
-    // But what makes it different from a product is that it is in the cart and kept in quantity within the cart.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
-    private Product product;  // Each item is linked to a product
+    private Product product;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
+    @JsonIgnore
     private Cart cart;
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+        setTotalPrice();
+    }
     public void setTotalPrice() {
-        // TotalPrice is calculated by multiplying unitPrice and quantity.
-        this.totalPrice = this.unitPrice.multiply(new BigDecimal(quantity));
+        if (this.unitPrice != null) {
+            this.totalPrice = this.unitPrice.multiply(BigDecimal.valueOf(quantity));
+        } else {
+            this.totalPrice = BigDecimal.ZERO;
+        }
     }
 
+    // Sonsuz döngüyü önlemek için sadece id'yi kullan
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        return Objects.equals(id, cartItem.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

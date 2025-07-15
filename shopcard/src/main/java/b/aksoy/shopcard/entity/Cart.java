@@ -1,51 +1,70 @@
 package b.aksoy.shopcard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Cart {
-    // shopping cart(alısverıs sepetı)
-    // Represents a user's shopping cart.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal totalAmount = BigDecimal.ZERO; // Total amount of the cart
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
-    // The mappedBy = "cart" statement indicates that the relationship is managed by CartItem.
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private Set<CartItem> cartItems;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<CartItem> cartItems = new HashSet<>();
 
     public void addCartItem(CartItem cartItem) {
-        this.cartItems.add(cartItem);  // Adds a new item
-        cartItem.setCart(this); // Establishes a two-way relationship
-        updateTotalAmount();  // Updates the total amount
+        this.cartItems.add(cartItem);
+        cartItem.setCart(this);
+        updateTotalAmount();
     }
 
     public void removeCartItem(CartItem cartItem) {
-        this.cartItems.remove(cartItem);  // Removes the item from the cart
-        cartItem.setCart(null);  // Breaks the relationship
-        updateTotalAmount();  // Updates the total amount
+        this.cartItems.remove(cartItem);
+        cartItem.setCart(null);
+        updateTotalAmount();
     }
 
-    private void updateTotalAmount() {
-        this.totalAmount = cartItems.stream().map(item ->
-        {
-            BigDecimal unitprice = item.getUnitPrice();
-            if (unitprice == null) {
-                return BigDecimal.ZERO;
-            }
-            return unitprice.multiply(BigDecimal.valueOf(item.getQuantity()));
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-
+    public void updateTotalAmount() {
+        this.totalAmount = cartItems.stream()
+                .map(item -> {
+                    BigDecimal unitPrice = item.getUnitPrice();
+                    if (unitPrice == null) {
+                        return BigDecimal.ZERO;
+                    }
+                    return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    // getTotalAmount metodunu ekledik
+    public BigDecimal getTotalAmount() {
+        updateTotalAmount();
+        return totalAmount;
+    }
+
+    // Sonsuz döngüyü önlemek için sadece id'yi kullan
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cart cart = (Cart) o;
+        return Objects.equals(id, cart.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

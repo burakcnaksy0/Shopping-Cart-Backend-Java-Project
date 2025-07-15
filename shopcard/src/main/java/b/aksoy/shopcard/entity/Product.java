@@ -41,7 +41,7 @@ public class Product {
      cascade = CascadeType.ALL --> If a product is deleted, the images associated with that product will also be deleted.
      orphanRemoval = true --> If you stop associating a product image with that product, that image will be automatically deleted from the database.
     */
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<Image> images; // Each product have one or more than one image.
 
