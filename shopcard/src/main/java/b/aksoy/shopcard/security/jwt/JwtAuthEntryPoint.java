@@ -13,8 +13,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// Bu interface, yetkisiz erişim denemelerinde ne yapılacağını tanımlar
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+    // Bu metod, yetkisiz erişim denemelerinde ne yapılacağını belirler
+    // Yetkisiz erişim denemesi olduğunda, bu metod çağrılır
+    // authException: Kimlik doğrulama hatası detayları
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,

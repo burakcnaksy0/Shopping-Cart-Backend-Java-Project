@@ -23,7 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("${api.prefix}/auth")
 public class AuthController {
+    // Spring Security'nin kimlik doğrulama mekanizmasını yöneten bir bileşendir.
+    // Spring Security, kullanıcıların kimlik bilgilerini doğrulamak ve yetkilendirme işlemlerini yapmak için AuthenticationManager arayüzünü kullanır.
     private final AuthenticationManager authenticationManager;
+    // JWT (JSON Web Token) oluşturmak ve doğrulamak için kullanılan yardımcı sınıf.
+    // JWT, kullanıcıların kimlik bilgilerini güvenli bir şekilde transfer etmek için kullanılan bir mekanizmadır.
     private final JwtUtils jwtUtils;
 
     @PostMapping("/login")
@@ -31,9 +35,10 @@ public class AuthController {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),loginRequest.getPassword()
-                    ));
+                            loginRequest.getEmail(),loginRequest.getPassword()));
+            // Spring Security, kimlik doğrulama başarılı olduğunda, kimlik bilgilerini güvenli bir şekilde transfer etmek için AuthenticationManager arayüzünü kullanır.
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            // JWT, kullanıcıların kimlik bilgilerini güvenli bir şekilde transfer etmek için kullanılan bir mekanizmadır.
             String jwt = jwtUtils.generateTokenForUser(authentication);
             ShopUserDetails userDetails = (ShopUserDetails) authentication.getPrincipal();
             JwtResponse jwtResponse = new JwtResponse(userDetails.getId(),jwt);

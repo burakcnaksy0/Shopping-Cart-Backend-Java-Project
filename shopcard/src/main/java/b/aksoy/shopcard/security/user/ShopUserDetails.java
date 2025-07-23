@@ -9,11 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// veritabanınızda tuttuğunuz User nesnesini (entity), Spring Security'nin anlayabileceği bir formata dönüştürür.
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,8 +24,11 @@ public class ShopUserDetails implements UserDetails {
         private String email;
         private String password;
 
+        // Kullanıcının sahip olduğu yetkileri (rolleri) tutan bir koleksiyondur.
+        // Spring Security, bir kullanıcının belirli bir sayfaya veya metoda erişim izni olup olmadığını kontrol etmek için bu koleksiyonu kullanır.
         private Collection<GrantedAuthority> authorities;
 
+        // Bu metot, veritabanınızda tuttuğunuz User nesnesini (entity), Spring Security'nin anlayabileceği bir formata dönüştürür.
         public static ShopUserDetails buildUserService(User user) {
             List<GrantedAuthority> authorities = user.getRoles()
                     .stream()

@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
-
+// Bu sınıf, Spring Security'nin "Bir kullanıcıyı kullanıcı adına göre nasıl bulurum?" sorusuna cevap verir.
 @Service
 @RequiredArgsConstructor
 public class ShopUserDetailsService implements UserDetailsService {

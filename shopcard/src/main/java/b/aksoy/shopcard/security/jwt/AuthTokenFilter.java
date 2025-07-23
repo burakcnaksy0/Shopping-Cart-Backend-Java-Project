@@ -7,18 +7,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-public class AuthTokenFilter extends OncePerRequestFilter {
+// Bu, her HTTP isteğinde sadece bir kez çalışmasını garanti eder
+public class AuthTokenFilter extends OncePerRequestFilter { 
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
@@ -34,17 +33,20 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     }
 
-
+    // Her HTTP isteğinde çalışan ana metod
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt)) {
+            if (StringUtils.hasText(jwt) && jwtUtils.validateToken(jwt)) { // Token geçerli mi?
                 String username = jwtUtils.getUsernameFromToken(jwt);
                 UserDetails userDetails = shopUserDetailsService.loadUserByUsername(username);
+                // Authentication token oluşturma
                 var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // Security Context'e auth token'ı ekleme
+                // Bu, Spring Security'ın oturum yönetimi için kullanılır
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (JwtException e) {
