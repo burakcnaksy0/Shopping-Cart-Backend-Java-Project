@@ -1,6 +1,7 @@
 package b.aksoy.shopcard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,13 @@ public class Cart {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<CartItem> cartItems = new HashSet<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public void addCartItem(CartItem cartItem) {
         this.cartItems.add(cartItem);

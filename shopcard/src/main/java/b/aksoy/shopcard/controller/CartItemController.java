@@ -1,10 +1,14 @@
 package b.aksoy.shopcard.controller;
 
+import b.aksoy.shopcard.entity.Cart;
+import b.aksoy.shopcard.entity.User;
 import b.aksoy.shopcard.exception.CartItemNotFoundException;
 import b.aksoy.shopcard.exception.CartNotFoundException;
 import b.aksoy.shopcard.response.ApiResponse;
 import b.aksoy.shopcard.service.cart.CartService;
 import b.aksoy.shopcard.service.cartItem.ICartItemService;
+import b.aksoy.shopcard.service.user.IUserService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +20,13 @@ import org.springframework.web.bind.annotation.*;
 public class CartItemController {
     private final ICartItemService cartItemService;
     private final CartService cartService;
+    private final IUserService userService;
 
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long cartId,
-                                                     @RequestParam Long productId,
+    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long productId,
                                                      @RequestParam Integer quantity) {
         try {
+            /*
             Long finalCartId = cartId;
             if (finalCartId == null) {
                 // If cartId is not provided, initialize a new cart
@@ -34,15 +39,19 @@ public class CartItemController {
                 //     return cartRepository.save(newCart).getId();
                 // }
                 finalCartId = cartService.initializeNewCart(); // Assume you have this method
-            }
+             */
+            User user = userService.getAuthenticatedUser();
+            Cart cart = cartService.initializeNewCart(user);
+            cartItemService.addItemToCart(cart.getId(), productId, quantity);
+            return ResponseEntity.ok(new ApiResponse("Add item successful", null));
 
-            cartItemService.addItemToCart(finalCartId, productId, quantity);
-            return ResponseEntity.ok(new ApiResponse("Item added to cart successfully. Cart ID: " + finalCartId, null));
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(e.getMessage(), null));
         } catch (CartNotFoundException e) { // Catch CartNotFoundException specifically
             return ResponseEntity.status(HttpStatus.NOT_FOUND) // Use NOT_FOUND for resource not found
                     .body(new ApiResponse(e.getMessage(), null));
-        } catch (
-                CartItemNotFoundException e) { // This exception should ideally not be thrown by addItemToCart unless it's for product not found in cart initially, but not for new adds
+        } catch (CartItemNotFoundException e) { // This exception should ideally not be thrown by addItemToCart unless it's for product not found in cart initially, but not for new adds
             return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use BAD_REQUEST if something is wrong with the request payload
                     .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) { // Catch other potential exceptions like ProductNotFoundException

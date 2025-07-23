@@ -1,0 +1,791 @@
+  <!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopcard Yönetim Paneli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --primary-light: #8b5cf6;
+            --accent: #0ea5e9;
+            --accent-light: #38bdf8;
+            --bg: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-table: rgba(255, 255, 255, 0.03);
+            --text: #f8fafc;
+            --text-muted: #cbd5e1;
+            --error: #f87171;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.25);
+            --glow: rgba(99, 102, 241, 0.3);
+        }
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px var(--shadow),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 20px;
+            box-shadow: 0 8px 32px var(--glow);
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px var(--glow);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: var(--text);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+        .divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .section {
+            background: var(--bg-table);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 1rem;
+            box-shadow: 
+                0 4px 12px rgba(99, 102, 241, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover, .btn:focus {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(99, 102, 241, 0.4),
+                0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        .input-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        input[type="number"], input[type="text"] {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-width: 120px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 
+                0 0 0 3px rgba(99, 102, 241, 0.1),
+                inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        input[type="number"]::placeholder, input[type="text"]::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+        .table-container {
+            margin-top: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-table);
+            backdrop-filter: blur(10px);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .card {
+            background: var(--bg-table);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .loading {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .loading::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: var(--error);
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+        
+        .success {
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .section {
+                padding: 1rem;
+            }
+            
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input[type="number"], input[type="text"] {
+                width: 100%;
+            }
+            
+            .logo {
+                padding: 0.75rem 1.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="32" height="32" rx="8" fill="#ffffff"/>
+                    <path d="M8 12h16l-1.5 8H9.5L8 12zm2 2v4h10v-4H10z" fill="#6366f1"/>
+                    <circle cx="11" cy="26" r="2" fill="#6366f1"/>
+                    <circle cx="21" cy="26" r="2" fill="#6366f1"/>
+                </svg>
+                <span class="logo-text">Shopcard</span>
+            </div>
+            <h1>Yönetim Paneli</h1>
+            <p class="subtitle">Modern e-ticaret yönetim sistemi</p>
+        </div>
+        
+        <hr class="divider" />
+
+        <div class="sections-grid">
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-box section-icon"></i>
+                    Ürünler
+                </div>
+                <button class="btn" onclick="getProducts()">
+                    <i class="fas fa-eye"></i>
+                    Ürünleri Göster
+                </button>
+                <div id="products"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-tags section-icon"></i>
+                    Kategoriler
+                </div>
+                <button class="btn" onclick="getCategories()">
+                    <i class="fas fa-list"></i>
+                    Kategorileri Göster
+                </button>
+                <div id="categories"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-users section-icon"></i>
+                    Kullanıcılar
+                </div>
+                <button class="btn" onclick="getUsers()">
+                    <i class="fas fa-user-friends"></i>
+                    Kullanıcıları Göster
+                </button>
+                <div id="users"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-plus section-icon"></i>
+                    Ürün Ekle
+                </div>
+                <form id="addProductForm" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="productName" style="font-weight: 600; color: var(--text);">Ürün Adı:</label>
+                        <input id="productName" type="text" placeholder="Ürün adını girin" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="productBrand" style="font-weight: 600; color: var(--text);">Marka:</label>
+                        <input id="productBrand" type="text" placeholder="Marka adını girin" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="productPrice" style="font-weight: 600; color: var(--text);">Fiyat:</label>
+                        <input id="productPrice" type="number" step="0.01" min="0" placeholder="0.00" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="productInventory" style="font-weight: 600; color: var(--text);">Stok Miktarı:</label>
+                        <input id="productInventory" type="number" min="0" placeholder="0" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="productDescription" style="font-weight: 600; color: var(--text);">Açıklama:</label>
+                        <textarea id="productDescription" placeholder="Ürün açıklamasını girin" rows="3" style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="categoryName" style="font-weight: 600; color: var(--text);">Kategori Adı:</label>
+                        <input id="categoryName" type="text" placeholder="Kategori adını girin" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-table); color: var(--text); font-size: 0.9rem;">
+                    </div>
+                    
+                    <button type="button" class="btn" onclick="addProduct()" style="margin-top: 1rem;">
+                        <i class="fas fa-plus"></i>
+                        Ürün Ekle
+                    </button>
+                </form>
+                <div id="addProductResult"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-shopping-cart section-icon"></i>
+                    Sepet Toplamı
+                </div>
+            <label for="cartIdInput" style="font-weight:600;">Sepet ID:</label>
+            <input id="cartIdInput" type="number" min="1" placeholder="Örn: 1">
+            <button class="btn" onclick="getCartTotal()">Sepet Toplamını Göster</button>
+            <div id="cartTotalResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function showLoading(target) {
+            document.getElementById(target).innerHTML = '<div class="loading">Yükleniyor...</div>';
+        }
+        function showError(target, msg) {
+            document.getElementById(target).innerHTML = `<div class="error">${msg}</div>`;
+        }
+
+        async function getProducts() {
+            const target = 'products';
+            showLoading(target);
+            try {
+                const response = await fetch('/api/v1/products/all');
+                if (!response.ok) throw new Error('Ürünler alınamadı!');
+                const data = await response.json();
+                const products = data.data || [];
+                if (!Array.isArray(products) || products.length === 0) {
+                    document.getElementById(target).innerHTML = '<div class="card">Hiç ürün yok.</div>';
+                    return;
+                }
+                let html = '<table><tr><th>ID</th><th>İsim</th><th>Fiyat</th><th>Kategori</th></tr>';
+                products.forEach(p => {
+                    html += `<tr><td>${p.id}</td><td>${p.name || p.productName}</td><td>${p.price}</td><td>${p.category ? (p.category.name || p.category) : ''}</td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById(target).innerHTML = html;
+            } catch (e) {
+                showError(target, e.message);
+            }
+        }
+
+        async function getCategories() {
+            const target = 'categories';
+            showLoading(target);
+            try {
+                const response = await fetch('/api/v1/categories/all');
+                if (!response.ok) throw new Error('Kategoriler alınamadı!');
+                const data = await response.json();
+                const categories = data.data || [];
+                if (!Array.isArray(categories) || categories.length === 0) {
+                    document.getElementById(target).innerHTML = '<div class="card">Hiç kategori yok.</div>';
+                    return;
+                }
+                let html = '<table><tr><th>ID</th><th>İsim</th></tr>';
+                categories.forEach(c => {
+                    html += `<tr><td>${c.id}</td><td>${c.name}</td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById(target).innerHTML = html;
+            } catch (e) {
+                showError(target, e.message);
+            }
+        }
+
+        async function getUsers() {
+            const target = 'users';
+            showLoading(target);
+            try {
+                const response = await fetch('/api/v1/users/all');
+                if (!response.ok) throw new Error('Kullanıcılar alınamadı!');
+                const data = await response.json();
+                const users = data.data || [];
+                if (!Array.isArray(users) || users.length === 0) {
+                    document.getElementById(target).innerHTML = '<div class="card">Hiç kullanıcı yok.</div>';
+                    return;
+                }
+                let html = '<table><tr><th>ID</th><th>İsim</th><th>Email</th></tr>';
+                users.forEach(u => {
+                    html += `<tr><td>${u.id}</td><td>${u.name || u.username}</td><td>${u.email}</td></tr>`;
+                });
+                html += '</table>';
+                document.getElementById(target).innerHTML = html;
+            } catch (e) {
+                showError(target, e.message);
+            }
+        }
+
+        async function getCartTotal() {
+            const cartId = document.getElementById('cartIdInput').value;
+            const target = document.getElementById('cartTotalResult');
+            
+            if (!cartId) {
+                showError(target, 'Lütfen geçerli bir sepet ID girin!');
+                return;
+            }
+            
+            showLoading(target);
+            
+            fetch(`/api/v1/carts/${cartId}/total-price`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "success") {
+                        target.innerHTML = `<div class="success-message">Sepet Toplamı: ${data.data} TL</div>`;
+                    } else {
+                        showError(target, data.message || 'Sepet toplamı alınamadı!');
+                    }
+                })
+                .catch(error => {
+                    showError(target, 'Bağlantı hatası: ' + error.message);
+                });
+        }
+
+        // Ürün ekleme formu event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM yüklendi');
+            const addProductForm = document.getElementById('addProductForm');
+            
+            if (addProductForm) {
+                console.log('Form bulundu, event listener ekleniyor');
+                addProductForm.addEventListener('submit', function(e) {
+                    console.log('Form submit edildi');
+                    e.preventDefault();
+                    addProduct();
+                });
+            } else {
+                console.error('Form bulunamadı!');
+            }
+        });
+        
+        // Alternatif olarak butona direkt click event ekleyelim
+        function setupProductForm() {
+            const submitBtn = document.querySelector('#addProductForm button[type="submit"]');
+            if (submitBtn) {
+                console.log('Submit butonu bulundu, click event ekleniyor');
+                submitBtn.addEventListener('click', function(e) {
+                    console.log('Submit butonuna tıklandı');
+                    e.preventDefault();
+                    addProduct();
+                });
+            }
+        }
+        
+        // Sayfa yüklendikten sonra setup'ı çalıştır
+        window.addEventListener('load', setupProductForm);
+
+        function addProduct() {
+            const target = document.getElementById('addProductResult');
+            
+            console.log('addProduct fonksiyonu çalıştı');
+            
+            // Form verilerini al
+            const productData = {
+                name: document.getElementById('productName').value.trim(),
+                brand: document.getElementById('productBrand').value.trim(),
+                price: parseFloat(document.getElementById('productPrice').value),
+                inventory: parseInt(document.getElementById('productInventory').value),
+                description: document.getElementById('productDescription').value.trim(),
+                category: {
+                    name: document.getElementById('categoryName').value.trim()
+                }
+            };
+            
+            console.log('Form verileri:', productData);
+            
+            // Basit validasyon
+            if (!productData.name || !productData.brand || isNaN(productData.price) || 
+                isNaN(productData.inventory) || !productData.category.name) {
+                console.log('Validasyon hatası: Eksik alanlar');
+                showError(target, 'Lütfen tüm alanları doldurun!');
+                return;
+            }
+            
+            if (productData.price <= 0) {
+                console.log('Validasyon hatası: Fiyat 0 veya negatif');
+                showError(target, 'Fiyat 0\'dan büyük olmalıdır!');
+                return;
+            }
+            
+            if (productData.inventory < 0) {
+                console.log('Validasyon hatası: Stok negatif');
+                showError(target, 'Stok miktarı negatif olamaz!');
+                return;
+            }
+            
+            console.log('Validasyon başarılı, API isteği gönderiliyor...');
+            showLoading(target);
+            
+            fetch('/api/v1/products/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.message === "Add operation success!") {
+                    target.innerHTML = `<div style="color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem;">Ürün başarıyla eklendi! ID: ${data.data.id}</div>`;
+                    // Formu temizle
+                    document.getElementById('addProductForm').reset();
+                } else {
+                    target.innerHTML = `<div style="color: #f87171; background: rgba(248, 113, 113, 0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem;">Hata: ${data.message || 'Ürün eklenemedi!'}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                target.innerHTML = `<div style="color: #f87171; background: rgba(248, 113, 113, 0.1); padding: 1rem; border-radius: 8px; margin-top: 1rem;">Bağlantı hatası: ${error.message}</div>`;
+            });
+        }
+    </script>
+</body>
+</html>

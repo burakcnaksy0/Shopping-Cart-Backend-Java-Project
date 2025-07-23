@@ -18,19 +18,6 @@ import java.math.BigDecimal;
 public class CartController {
     private final ICartService cartService;
 
-
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createNewCart() {
-        try {
-            Long cartId = cartService.initializeNewCart();
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse("New cart created successfully", cartId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Error creating new cart: " + e.getMessage(), null));
-        }
-    }
-
     @GetMapping("/{cartId}/my-cart")
     public ResponseEntity<ApiResponse> getCartResponse(@PathVariable long cartId) {
         try {
@@ -64,14 +51,4 @@ public class CartController {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
 }
