@@ -1,7 +1,10 @@
 package b.aksoy.shopcard.exception;
 
-public class QuantityNotNegativeValueException extends RuntimeException {
+import b.aksoy.shopcard.exception.handler.AbstractExceptionHandler;
+import org.springframework.http.HttpStatus;
+
+public class QuantityNotNegativeValueException extends AbstractExceptionHandler {
     public QuantityNotNegativeValueException(String message) {
-        super(message);
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }

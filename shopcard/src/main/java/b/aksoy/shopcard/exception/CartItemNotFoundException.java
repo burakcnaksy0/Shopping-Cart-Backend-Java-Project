@@ -1,7 +1,10 @@
 package b.aksoy.shopcard.exception;
 
-public class CartItemNotFoundException extends RuntimeException {
+import b.aksoy.shopcard.exception.handler.AbstractExceptionHandler;
+import org.springframework.http.HttpStatus;
+
+public class CartItemNotFoundException extends AbstractExceptionHandler {
     public CartItemNotFoundException(String msg) {
-        super(msg);
+        super(msg, HttpStatus.CONFLICT);
     }
 }

@@ -1,7 +1,10 @@
 package b.aksoy.shopcard.exception;
 
-public class AlreadyExistsCategoryException extends RuntimeException {
+import b.aksoy.shopcard.exception.handler.AbstractExceptionHandler;
+import org.springframework.http.HttpStatus;
+
+public class AlreadyExistsCategoryException extends AbstractExceptionHandler {
     public AlreadyExistsCategoryException(String s) {
-        super(s);
+        super(s, HttpStatus.CONFLICT);
     }
 }
