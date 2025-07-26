@@ -58,18 +58,9 @@ public class CategoryController {
 
     @PutMapping("/category/{categoryId}/update")
     public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long categoryId, @RequestBody Category name) {
-        try {
-            Category category = categoryService.getCategoryById(categoryId);
-            if (category !=null){
-                categoryService.updateCategory(name,categoryId);
-                return ResponseEntity.ok(new ApiResponse("Update operation is success!",category));
-            }
-        }catch (CategoryNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(),null));
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse("Update operation is failed!",HttpStatus.INTERNAL_SERVER_ERROR));
+
+        Category category= categoryService.updateCategory(name, categoryId);
+        return ResponseEntity.ok(new ApiResponse("Update operation is success!", category));
     }
 
 }

@@ -25,12 +25,10 @@ public class ImageController {
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImage(@RequestParam List<MultipartFile> files , @RequestParam Long productId) {
-        try {
+
             List<ImageDto> images = imageService.saveImage(files, productId);
             return ResponseEntity.ok(new ApiResponse("Upload success.", images));
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Upload failed.", e.getMessage()));
-        }
+
     }
 
     @GetMapping("/image/download/{imageId}")
@@ -50,30 +48,16 @@ public class ImageController {
 
     @PutMapping("/image/{imageId}/update")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId,@RequestParam MultipartFile file) {
-        try {
-            Image image = imageService.getImageById(imageId);
-            if (image != null) {
-                imageService.updateImage(file, imageId);
-                return ResponseEntity.ok(new ApiResponse("Update success.", null));
-            }
-        } catch (ImageNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Update failed.", HttpStatus.INTERNAL_SERVER_ERROR));
+        imageService.updateImage(file, imageId);
+        return ResponseEntity.ok(new ApiResponse("Update success.", null));
     }
 
     @DeleteMapping("/image/{imageId}/delete")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
-        try {
-            Image image = imageService.getImageById(imageId);
-            if (image != null) {
-                imageService.deleteImageById(imageId);
-                return ResponseEntity.ok(new ApiResponse("Delete success.", null));
-            }
-        } catch (ImageNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Delete failed.", HttpStatus.INTERNAL_SERVER_ERROR));
+
+
+        imageService.deleteImageById(imageId);
+        return ResponseEntity.ok(new ApiResponse("Delete success.", null));
     }
 
 

@@ -31,7 +31,7 @@ public class OrderService implements IOrderService {
 
     @Transactional
     @Override
-    public Order placeOrder(Long userId) {
+    public OrderDto placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
         Order order = createOrder(cart);
         List<OrderItem> orderItemList = createOrderItems(order, cart);
@@ -40,7 +40,7 @@ public class OrderService implements IOrderService {
         Order orderSaved = orderRepository.save(order);
         cartService.clearCart(cart.getId());
 
-        return orderSaved;
+        return convertToDto(orderSaved);
     }
 
 
