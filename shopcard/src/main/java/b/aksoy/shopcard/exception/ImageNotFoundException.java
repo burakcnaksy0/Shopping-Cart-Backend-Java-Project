@@ -1,7 +1,10 @@
 package b.aksoy.shopcard.exception;
 
-public class ImageNotFoundException extends RuntimeException {
+import b.aksoy.shopcard.exception.handler.AbstractExceptionHandler;
+import org.springframework.http.HttpStatus;
+
+public class ImageNotFoundException extends AbstractExceptionHandler {
     public ImageNotFoundException(String s) {
-        super(s);
+        super(s, HttpStatus.NOT_FOUND);
     }
 }

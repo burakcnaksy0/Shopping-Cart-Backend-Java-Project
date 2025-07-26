@@ -1,7 +1,10 @@
 package b.aksoy.shopcard.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import b.aksoy.shopcard.exception.handler.AbstractExceptionHandler;
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends AbstractExceptionHandler {
     public UserNotFoundException(String msg) {
-        super(msg);
+        super(msg, HttpStatus.NOT_FOUND);
     }
 }

@@ -63,13 +63,10 @@ public class CartItemController {
     @DeleteMapping("/cart/{cartId}/item/{productId}/remove")
     public ResponseEntity<ApiResponse> removeItemFromCart(@PathVariable Long cartId,
                                                           @PathVariable Long productId) {
-        try {
-            cartItemService.removeItemFromCart(cartId, productId);
-            return ResponseEntity.ok(new ApiResponse("Remove item from cart", null));
-        } catch (CartItemNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
-        }
+
+        cartItemService.removeItemFromCart(cartId, productId);
+        return ResponseEntity.ok(new ApiResponse("Remove item from cart", null));
+
 
     }
 
@@ -77,13 +74,8 @@ public class CartItemController {
     public ResponseEntity<ApiResponse> updateItemQuantity(@PathVariable Long cartId,
                                                           @PathVariable Long productId,
                                                           @RequestParam Integer quantity) {
-        try {
-            cartItemService.updateItemQuantity(cartId, productId, quantity);
-            return ResponseEntity.ok(new ApiResponse("Update item quantity", null));
-        } catch (CartItemNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
-        }
+        cartItemService.updateItemQuantity(cartId, productId, quantity);
+        return ResponseEntity.ok(new ApiResponse("Update item quantity", null));
     }
 
 
